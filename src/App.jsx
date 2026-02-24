@@ -63,7 +63,7 @@ function FloatingChat() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      text: "Hey! I'm Caleb's AI assistant. Ask me anything about his background, skills, or experience! 👋",
+      text: "GREETINGS TRAVELER. I am Pip-Boy, Caleb's AI assistant. Ask me anything about his background, skills, or experience! ☢️",
     },
   ]);
   const [input, setInput] = useState("");
@@ -111,7 +111,7 @@ function FloatingChat() {
           <div className="chat-header">
             <div className="chat-header__info">
               <span className="pulse-dot" />
-              <span>Ask Caleb's AI</span>
+              <span>Ask Pip-Boy</span>
             </div>
             <button className="chat-close" onClick={() => setOpen(false)}>✕</button>
           </div>
