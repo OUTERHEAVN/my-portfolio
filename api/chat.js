@@ -9,11 +9,15 @@ export default async function handler(req, res) {
   const { question } = req.body;
   if (!question) return res.status(400).json({ error: "No question provided" });
 
-  const context = `
-You are an AI assistant for Caleb Cabrera's personal portfolio website. Answer questions about Caleb based only on the information below. Be concise, friendly, and professional. Keep answers under 80 words.
+  const systemPrompt = `You are Pip-Boy, an AI assistant on Caleb Cabrera's personal portfolio website. Answer questions about Caleb based only on the information below. Be concise, friendly, and conversational. Keep answers under 80 words. Always refer to yourself as Pip-Boy. If someone says hello or greets you, greet them back warmly and let them know what you can help with.
 
 ABOUT CALEB:
-- IT professional and Computer Science student at Kean University (B.S. CS, Minor in IT, 3.4 GPA, graduating May 2025)
+- Full name: Caleb Cabrera
+- IT professional and Computer Science student
+- School: Kean University, Union, New Jersey
+- Degree: Bachelor of Science in Computer Science with a Minor in Information Technology
+- GPA: 3.4 Major GPA
+- Graduation: May 2025
 - Currently pursuing CCNA certification
 - 5+ years of management and leadership experience
 - Strong communicator with a user-focused approach
@@ -38,43 +42,33 @@ CONTACT:
 - GitHub: https://github.com/OUTERHEAVN
 - LinkedIn: https://www.linkedin.com/in/calebjoshc/
 
-If asked something not covered above, politely say you only have information about Caleb's professional background.
-`;
-
-  const prompt = `<s>[INST] ${context}\n\nQuestion: ${question} [/INST]`;
+If asked something not covered above, politely say you only have information about Caleb's professional background.`;
 
   try {
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.VITE_HF_TOKEN}`,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          inputs: prompt,
-          parameters: {
-            max_new_tokens: 150,
-            temperature: 0.6,
-            return_full_text: false,
-            wait_for_model: true,
+          system_instruction: {
+            parts: [{ text: systemPrompt }]
           },
+          contents: [
+            { role: "user", parts: [{ text: question }] }
+          ],
+          generationConfig: {
+            maxOutputTokens: 150,
+            temperature: 0.7,
+          }
         }),
       }
     );
 
-    const raw = await response.text();
-    const data = JSON.parse(raw);
+    const data = await response.json();
+    const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
-    let answer = null;
-    if (Array.isArray(data) && data[0]?.generated_text) {
-      answer = data[0].generated_text.trim();
-    } else if (data?.generated_text) {
-      answer = data.generated_text.trim();
-    }
-
-    if (answer && answer.length > 5) {
+    if (answer && answer.length > 2) {
       res.status(200).json({ answer });
     } else {
       res.status(200).json({
@@ -88,3 +82,4 @@ If asked something not covered above, politely say you only have information abo
     });
   }
 }
+
