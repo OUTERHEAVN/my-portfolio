@@ -57,6 +57,102 @@ const EXPERIENCE = [
   },
 ];
 
+// ── Floating Chat component ──────────────────────────────────────
+function FloatingChat() {
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    {
+      role: "assistant",
+      text: "Hey! I'm Caleb's AI assistant. Ask me anything about his background, skills, or experience! 👋",
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const send = async () => {
+    const q = input.trim();
+    if (!q || loading) return;
+    setInput("");
+    setMessages((prev) => [...prev, { role: "user", text: q }]);
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: q }),
+      });
+      const data = await response.json();
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", text: data.answer || "Sorry, I couldn't find an answer." },
+      ]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", text: "Something went wrong. Please try again." },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKey = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  };
+
+  return (
+    <div className="chat-wrapper">
+      {open && (
+        <div className="chat-window">
+          <div className="chat-header">
+            <div className="chat-header__info">
+              <span className="pulse-dot" />
+              <span>Ask Caleb's AI</span>
+            </div>
+            <button className="chat-close" onClick={() => setOpen(false)}>✕</button>
+          </div>
+          <div className="chat-messages">
+            {messages.map((m, i) => (
+              <div key={i} className={`chat-msg chat-msg--${m.role}`}>
+                <span className="chat-msg__label">{m.role === "assistant" ? "AI" : "You"}</span>
+                <p>{m.text}</p>
+              </div>
+            ))}
+            {loading && (
+              <div className="chat-msg chat-msg--assistant">
+                <span className="chat-msg__label">AI</span>
+                <p className="chat-typing">
+                  <span className="dot" /><span className="dot" /><span className="dot" />
+                </p>
+              </div>
+            )}
+          </div>
+          <div className="chat-input-row">
+            <input
+              className="chat-input"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKey}
+              placeholder="Ask me anything..."
+              disabled={loading}
+            />
+            <button className="chat-send" onClick={send} disabled={loading || !input.trim()}>
+              ▶
+            </button>
+          </div>
+        </div>
+      )}
+      <button className="chat-bubble" onClick={() => setOpen(!open)}>
+        {open ? "✕" : "💬"}
+      </button>
+    </div>
+  );
+}
+
 // ── AI Summary component ─────────────────────────────────────────
 function AISummary() {
   const [summary, setSummary] = useState("");
@@ -322,6 +418,9 @@ export default function App() {
       <footer className="footer">
         <p>Designed & built by Caleb Cabrera · {new Date().getFullYear()}</p>
       </footer>
+
+      {/* ── FLOATING CHAT ── */}
+      <FloatingChat />
     </div>
   );
 }
