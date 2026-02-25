@@ -955,3 +955,37 @@ ul { list-style: none; }
   .chat-window { width: 290px; }
   .chat-wrapper { bottom: 1rem; right: 1rem; }
 }
+
+/* ── RESUME BUTTON ── */
+.resume-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.resume-btn__icon {
+  font-size: 1.5rem;
+  color: var(--cyan);
+  line-height: 1;
+  transition: var(--transition);
+}
+
+.resume-btn__label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.resume-btn:hover .resume-btn__icon {
+  color: var(--green);
+  transform: translateY(2px);
+  filter: drop-shadow(0 0 6px var(--green));
+}
+
+.resume-btn:hover .resume-btn__label {
+  color: var(--green);
+}
