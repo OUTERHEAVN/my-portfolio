@@ -118,7 +118,7 @@ function FloatingChat() {
           <div className="chat-messages">
             {messages.map((m, i) => (
               <div key={i} className={`chat-msg chat-msg--${m.role}`}>
-                <span className="chat-msg__label">{m.role === "assistant" ? "AI" : "You"}</span>
+                <span className="chat-msg__label">{m.role === "assistant" ? "PIP-BOY" : "You"}</span>
                 <p>{m.text}</p>
               </div>
             ))}
@@ -305,6 +305,17 @@ export default function App() {
             <div className="stat">
               <span className="stat__num">3.4</span>
               <span className="stat__label">Major GPA</span>
+            </div>
+            <div className="stat-divider" />
+            <div className="stat">
+              <a
+                href="/caleb-cabrera-resume.pdf"
+                download="Caleb_Cabrera_Resume.pdf"
+                className="resume-btn"
+              >
+                <span className="resume-btn__icon">⬇</span>
+                <span className="resume-btn__label">Resume</span>
+              </a>
             </div>
           </div>
           <AISummary />
