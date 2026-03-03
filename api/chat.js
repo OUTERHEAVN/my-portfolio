@@ -16,7 +16,7 @@ async function getHuggingFaceResponse(userMessage) {
   if (!hfToken) return null;
 
   const model = process.env.HF_CHAT_MODEL || "mistralai/Mistral-7B-Instruct-v0.3";
-  const url = `https://api-inference.huggingface.co/models/${model}`;
+  const url = `https://router.huggingface.co/hf-inference/models/${model}`;
   const prompt = `<s>[INST] ${buildSystemPrompt(userMessage)} [/INST]`;
 
   try {
