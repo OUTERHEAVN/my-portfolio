@@ -5,8 +5,9 @@ function safeFallbackReply() {
 async function getGeminiResponse(userMessage) {
   const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
   if (!apiKey) return safeFallbackReply();
+  const model = process.env.GEMINI_MODEL || "gemini-2.0-flash";
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   const prompt = [
     "You are Pip-Boy, an assistant for Caleb Cabrera's portfolio site.",
     "Answer briefly and professionally.",
