@@ -15,9 +15,9 @@ async function getHuggingFaceResponse(userMessage) {
   const hfToken = process.env.HUGGINGFACE_API_KEY || process.env.VITE_HF_TOKEN;
   if (!hfToken) return null;
 
-  const model = process.env.HF_CHAT_MODEL || "mistralai/Mistral-7B-Instruct-v0.3";
-  const url = `https://router.huggingface.co/hf-inference/models/${model}`;
-  const prompt = `<s>[INST] ${buildSystemPrompt(userMessage)} [/INST]`;
+  const model = process.env.HF_CHAT_MODEL || "Qwen/Qwen2.5-7B-Instruct";
+  const url = "https://router.huggingface.co/v1/chat/completions";
+  const system = "You are Pip-Boy, an assistant for Caleb Cabrera's portfolio site. Answer briefly and professionally. If asked unrelated questions, steer back to Caleb's background, experience, and skills.";
 
   try {
     const response = await fetch(url, {
@@ -27,20 +27,18 @@ async function getHuggingFaceResponse(userMessage) {
         Authorization: `Bearer ${hfToken}`,
       },
       body: JSON.stringify({
-        inputs: prompt,
-        parameters: {
-          max_new_tokens: 180,
-          temperature: 0.6,
-          return_full_text: false,
-          wait_for_model: true,
-        },
+        model,
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: userMessage },
+        ],
+        max_tokens: 180,
+        temperature: 0.6,
       }),
     });
 
     const data = await response.json();
-    const text = Array.isArray(data)
-      ? data?.[0]?.generated_text?.trim()
-      : data?.generated_text?.trim();
+    const text = data?.choices?.[0]?.message?.content?.trim();
 
     if (!response.ok || !text) return null;
     return text;
