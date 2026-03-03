@@ -6,11 +6,17 @@ const PORTFOLIO_FACTS = [
   "Name: Caleb Cabrera.",
   "Current role: Application Support and Front Desk Admin at RWJBarnabas Health (Oct 2024-Present).",
   "Previous roles: Energy Efficiency Program Support at TRC Companies (Sept 2022-June 2024); Energy Efficiency Intern at TRC Companies (June 2022-Sept 2022).",
-  "Education: B.S. in Computer Science from Kean University (graduating May 2025).",
+  "Education: B.S. in Computer Science with a Minor in Information Technology from Kean University (graduating May 2025).",
+  "GPA: 3.4 major GPA.",
   "Experience highlights: front-line IT support for a 40+ person clinical team; EPIC patient workflows; troubleshooting desktops, printers, phones, and network ports; incident escalation support.",
   "Advanced skills: hardware/software troubleshooting, system upgrades, device configurations, remote support, Microsoft Office Suite.",
   "Proficient skills: Active Directory, ServiceNow (ITSM), EPIC/MyChart, networking (CCNA in progress), data validation and reporting.",
   "Certification track: CCNA in progress.",
+  "Availability: open to IT roles, networking opportunities, and new collaborations.",
+  "Contact email: caleb@email.com.",
+  "GitHub: https://github.com/OUTERHEAVN",
+  "LinkedIn: https://www.linkedin.com/in/calebjoshc/",
+  "Resume download path: /caleb-cabrera-resume.pdf",
 ].join("\n");
 
 function getRuleBasedAnswer(userMessage) {
@@ -34,6 +40,34 @@ function getRuleBasedAnswer(userMessage) {
 
   if (q.includes("skills") || q.includes("tech stack") || q.includes("tools")) {
     return "Caleb's skills include troubleshooting, system upgrades, device configuration, remote support, Active Directory, ServiceNow, EPIC/MyChart, networking fundamentals, and data validation/reporting.";
+  }
+
+  if (q.includes("contact") || q.includes("email") || q.includes("reach") || q.includes("get in touch")) {
+    return "You can contact Caleb at caleb@email.com. You can also connect on LinkedIn (https://www.linkedin.com/in/calebjoshc/) or GitHub (https://github.com/OUTERHEAVN).";
+  }
+
+  if (q.includes("linkedin")) {
+    return "Caleb's LinkedIn: https://www.linkedin.com/in/calebjoshc/";
+  }
+
+  if (q.includes("github")) {
+    return "Caleb's GitHub: https://github.com/OUTERHEAVN";
+  }
+
+  if (q.includes("resume") || q.includes("cv")) {
+    return "You can download Caleb's resume from /caleb-cabrera-resume.pdf on this portfolio site.";
+  }
+
+  if (q.includes("available") || q.includes("availability") || q.includes("open to")) {
+    return "Caleb is open to IT roles, networking opportunities, and new collaborations.";
+  }
+
+  if (q.includes("gpa")) {
+    return "Caleb's listed major GPA is 3.4.";
+  }
+
+  if (q.includes("location") || q.includes("where are") || q.includes("located") || q.includes("based")) {
+    return "Caleb's portfolio does not list a specific location. I can share his role, experience, skills, and contact links.";
   }
 
   return null;
