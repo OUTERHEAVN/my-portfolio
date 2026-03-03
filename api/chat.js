@@ -2,11 +2,51 @@ function safeFallbackReply() {
   return "I can help with Caleb's background, experience, and technical skills. Ask about his roles, tools, or current focus.";
 }
 
+const PORTFOLIO_FACTS = [
+  "Name: Caleb Cabrera.",
+  "Current role: Application Support and Front Desk Admin at RWJBarnabas Health (Oct 2024-Present).",
+  "Previous roles: Energy Efficiency Program Support at TRC Companies (Sept 2022-June 2024); Energy Efficiency Intern at TRC Companies (June 2022-Sept 2022).",
+  "Education: B.S. in Computer Science from Kean University (graduating May 2025).",
+  "Experience highlights: front-line IT support for a 40+ person clinical team; EPIC patient workflows; troubleshooting desktops, printers, phones, and network ports; incident escalation support.",
+  "Advanced skills: hardware/software troubleshooting, system upgrades, device configurations, remote support, Microsoft Office Suite.",
+  "Proficient skills: Active Directory, ServiceNow (ITSM), EPIC/MyChart, networking (CCNA in progress), data validation and reporting.",
+  "Certification track: CCNA in progress.",
+].join("\n");
+
+function getRuleBasedAnswer(userMessage) {
+  const q = userMessage.toLowerCase();
+
+  if (q.includes("current role") || q.includes("what does caleb do now") || q.includes("current job")) {
+    return "Caleb currently works as Application Support and Front Desk Admin at RWJBarnabas Health (since October 2024).";
+  }
+
+  if (q.includes("experience") || q.includes("work history") || q.includes("previous role")) {
+    return "Caleb's recent experience includes Application Support and Front Desk Admin at RWJBarnabas Health (Oct 2024-Present), Energy Efficiency Program Support at TRC Companies (Sept 2022-June 2024), and Energy Efficiency Intern at TRC Companies (June 2022-Sept 2022).";
+  }
+
+  if (q.includes("education") || q.includes("degree") || q.includes("graduate") || q.includes("university")) {
+    return "Caleb is completing a B.S. in Computer Science at Kean University, with graduation in May 2025.";
+  }
+
+  if (q.includes("certification") || q.includes("ccna") || q.includes("certified") || q.includes("cert")) {
+    return "Caleb is currently pursuing his CCNA certification.";
+  }
+
+  if (q.includes("skills") || q.includes("tech stack") || q.includes("tools")) {
+    return "Caleb's skills include troubleshooting, system upgrades, device configuration, remote support, Active Directory, ServiceNow, EPIC/MyChart, networking fundamentals, and data validation/reporting.";
+  }
+
+  return null;
+}
+
 function buildSystemPrompt(userMessage) {
   return [
     "You are Pip-Boy, an assistant for Caleb Cabrera's portfolio site.",
+    "You must only use the facts below. Do not invent employers, titles, schools, certifications, or dates.",
+    "If the question is outside these facts, say you only answer based on Caleb's portfolio and ask a follow-up question.",
     "Answer briefly and professionally.",
-    "If asked unrelated questions, steer back to Caleb's background, experience, and skills.",
+    "Facts:",
+    PORTFOLIO_FACTS,
     `User question: ${userMessage}`,
   ].join("\n");
 }
@@ -83,6 +123,9 @@ export default async function handler(req, res) {
 
   const question = req.body?.question?.trim();
   if (!question) return res.status(400).json({ error: "Missing question" });
+
+  const directAnswer = getRuleBasedAnswer(question);
+  if (directAnswer) return res.status(200).json({ answer: directAnswer });
 
   const answer =
     (await getHuggingFaceResponse(question)) ||
